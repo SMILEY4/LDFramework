@@ -1,9 +1,12 @@
-package com.ruegnerlukas.tmxloader;
+package com.ruegnerlukas.tmxloader.tmxLayers;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TMXLayer implements TMXLayerInt {
+import com.ruegnerlukas.tmxloader.TMXData;
+import com.ruegnerlukas.tmxloader.TMXProperty;
+
+public class TMXTileLayer implements TMXLayer {
 
 	// layer
 	public String name;

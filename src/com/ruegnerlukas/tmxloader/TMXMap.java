@@ -3,6 +3,8 @@ package com.ruegnerlukas.tmxloader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ruegnerlukas.tmxloader.tmxLayers.TMXLayer;
+
 public class TMXMap {
 
 	// map
@@ -27,7 +29,7 @@ public class TMXMap {
 	public List<TMXTileset> tilesets = new ArrayList<TMXTileset>();
 
 	// layers
-	public List<TMXLayerInt> layers = new ArrayList<TMXLayerInt>();
+	public List<TMXLayer> layers = new ArrayList<TMXLayer>();
 
 
 	
@@ -59,7 +61,7 @@ public class TMXMap {
 		for(TMXTileset t : tilesets) {
 			t.prettyPrint(layer+1);
 		}
-		for(TMXLayerInt l : layers) {
+		for(TMXLayer l : layers) {
 			l.prettyPrint(layer+1);
 		}
 

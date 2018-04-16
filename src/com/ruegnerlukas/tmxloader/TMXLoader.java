@@ -14,6 +14,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.ruegnerlukas.tmxloader.tmxLayers.TMXGroupLayer;
+import com.ruegnerlukas.tmxloader.tmxLayers.TMXObjectLayer;
+import com.ruegnerlukas.tmxloader.tmxLayers.TMXTileLayer;
 import com.ruegnerlukas.tmxloader.tmxObjects.*;
 
 /**
@@ -234,7 +237,7 @@ public class TMXLoader {
 			}
 			
 			if("objectgroup".equalsIgnoreCase(child.getNodeName())) {
-				map.layers.add(parseObjectGroup(child));
+				map.layers.add(parseObjectLayer(child));
 				continue;
 			}
 			
@@ -244,7 +247,7 @@ public class TMXLoader {
 			}
 			
 			if("group".equalsIgnoreCase(child.getNodeName())) {
-				// TODO
+				map.layers.add(parseGroupLayer(child));
 				continue;
 			}
 			
@@ -255,10 +258,86 @@ public class TMXLoader {
 
 	
 	
-
-	private static TMXObjectGroup parseObjectGroup(Node ndObjectGroup) {
+	public static TMXGroupLayer parseGroupLayer(Node ndGroup) {
 		
-		TMXObjectGroup objGroup = new TMXObjectGroup();
+		TMXGroupLayer groupLayer = new TMXGroupLayer();
+		
+		NamedNodeMap groupAttribs = ndGroup.getAttributes();
+		for(int i=0; i<groupAttribs.getLength(); i++) {
+			Node att = groupAttribs.item(i);
+			String attName = att.getNodeName();
+			String attValue = att.getNodeValue();
+			
+			if("name".equalsIgnoreCase(attName)) {
+				groupLayer.name = attValue;
+				continue;
+			}
+			if("offsetx".equalsIgnoreCase(attName)) {
+				groupLayer.offsetX = Integer.parseInt(attValue);
+				continue;
+			}
+			if("offsety".equalsIgnoreCase(attName)) {
+				groupLayer.offsetY = Integer.parseInt(attValue);
+				continue;
+			}
+			if("opacity".equalsIgnoreCase(attName)) {
+				groupLayer.opacity = Float.parseFloat(attValue);
+				continue;
+			}
+			if("visible".equalsIgnoreCase(attName)) {
+				groupLayer.visible = attValue.equalsIgnoreCase("1");
+				continue;
+			}
+		}
+		
+		
+		NodeList children = ndGroup.getChildNodes();
+		for(int i=0; i<children.getLength(); i++) {
+			Node child = children.item(i);
+			
+			if("properties".equalsIgnoreCase(child.getNodeName())) {
+				NodeList propertyChildren = child.getChildNodes();
+				for(int j=0; j<propertyChildren.getLength(); j++) {
+					Node cProperty = propertyChildren.item(j);
+					if("property".equalsIgnoreCase(cProperty.getNodeName())) {
+						groupLayer.properties.add(parseProperty(cProperty));
+						continue;
+					}
+				}
+				continue;
+			}
+			if("layer".equalsIgnoreCase(child.getNodeName())) {
+				groupLayer.layers.add(parseLayer(child));
+				continue;
+			}
+			
+			if("objectgroup".equalsIgnoreCase(child.getNodeName())) {
+				groupLayer.layers.add(parseObjectLayer(child));
+				continue;
+			}
+			
+			if("imagelayer".equalsIgnoreCase(child.getNodeName())) {
+				// TODO
+				continue;
+			}
+			
+			if("group".equalsIgnoreCase(child.getNodeName())) {
+				groupLayer.layers.add(parseGroupLayer(child));
+				continue;
+			}
+			
+		}
+		
+		
+		return groupLayer;
+	}
+	
+	
+	
+
+	private static TMXObjectLayer parseObjectLayer(Node ndObjectGroup) {
+		
+		TMXObjectLayer objGroup = new TMXObjectLayer();
 		
 		NamedNodeMap groupAttribsAttribs = ndObjectGroup.getAttributes();
 		for(int i=0; i<groupAttribsAttribs.getLength(); i++) {
@@ -534,9 +613,9 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXLayer parseLayer(Node ndLayer) {
+	private static TMXTileLayer parseLayer(Node ndLayer) {
 		
-		TMXLayer layer = new TMXLayer();
+		TMXTileLayer layer = new TMXTileLayer();
 		
 		NamedNodeMap layerAttribs = ndLayer.getAttributes();
 		for(int i=0; i<layerAttribs.getLength(); i++) {
