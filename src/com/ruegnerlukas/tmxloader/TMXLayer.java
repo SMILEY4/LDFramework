@@ -3,7 +3,7 @@ package com.ruegnerlukas.tmxloader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TMXLayer {
+public class TMXLayer implements TMXLayerInt {
 
 	// layer
 	public String name;
@@ -11,10 +11,10 @@ public class TMXLayer {
 	public int y;
 	public int width;
 	public int height;
-	public float opacity;
-	public boolean visible;
-	public int offsetX;
-	public int offsetY;
+	public float opacity = 1;
+	public boolean visible = true;
+	public int offsetX = 0;
+	public int offsetY = 0;
 	
 	// properties
 	public List<TMXProperty> properties = new ArrayList<TMXProperty>();

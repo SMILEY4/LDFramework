@@ -5,7 +5,7 @@ package com.ruegnerlukas.tmxloader;
 public class TMXFrame {
 
 	public int tileID;
-	public int duration;
+	public int duration; // in ms
 	
 	
 	public void prettyPrint(int layer) {

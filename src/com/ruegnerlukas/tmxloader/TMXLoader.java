@@ -14,6 +14,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.ruegnerlukas.tmxloader.tmxObjects.*;
+
 /**
  * http://doc.mapeditor.org/en/latest/reference/tmx-map-format/
  * */
@@ -232,7 +234,7 @@ public class TMXLoader {
 			}
 			
 			if("objectgroup".equalsIgnoreCase(child.getNodeName())) {
-				// TODO
+				map.layers.add(parseObjectGroup(child));
 				continue;
 			}
 			
@@ -253,11 +255,288 @@ public class TMXLoader {
 
 	
 	
+
+	private static TMXObjectGroup parseObjectGroup(Node ndObjectGroup) {
+		
+		TMXObjectGroup objGroup = new TMXObjectGroup();
+		
+		NamedNodeMap groupAttribsAttribs = ndObjectGroup.getAttributes();
+		for(int i=0; i<groupAttribsAttribs.getLength(); i++) {
+			Node att = groupAttribsAttribs.item(i);
+			String attName = att.getNodeName();
+			String attValue = att.getNodeValue();
+			
+			if("name".equalsIgnoreCase(attName)) {
+				objGroup.name = attValue;
+				continue;
+			}
+			if("color".equalsIgnoreCase(attName)) {
+				objGroup.color = attValue;
+				continue;
+			}
+			if("opacity".equalsIgnoreCase(attName)) {
+				objGroup.opacity = Float.parseFloat(attValue);
+				continue;
+			}
+			if("visible".equalsIgnoreCase(attName)) {
+				objGroup.visible = attValue.equalsIgnoreCase("1");
+				continue;
+			}
+			if("offsetx".equalsIgnoreCase(attName)) {
+				objGroup.offsetX = Integer.parseInt(attValue);
+				continue;
+			}
+			if("offsety".equalsIgnoreCase(attName)) {
+				objGroup.offsetY = Integer.parseInt(attValue);
+				continue;
+			}
+			if("draworder".equalsIgnoreCase(attName)) {
+				objGroup.drawOrder = attValue;
+				continue;
+			}
+			
+		}
+		
+		
+		// children
+		NodeList children = ndObjectGroup.getChildNodes();
+		for(int i=0; i<children.getLength(); i++) {
+			Node child = children.item(i);
+			
+			if("properties".equalsIgnoreCase(child.getNodeName())) {
+				NodeList propertyChildren = child.getChildNodes();
+				for(int j=0; j<propertyChildren.getLength(); j++) {
+					Node cProperty = propertyChildren.item(j);
+					if("property".equalsIgnoreCase(cProperty.getNodeName())) {
+						objGroup.properties.add(parseProperty(cProperty));
+						continue;
+					}
+				}
+				continue;
+			}
+			
+			if("object".equalsIgnoreCase(child.getNodeName())) {
+				objGroup.objects.add(parseObject(child));
+				continue;
+			}
+			
+		}
+		
+		return objGroup;
+	}
+	
+	
+	
+	
+	private static TMXObject parseObject(Node ndObject) {
+		
+		TMXObject object = null;
+		
+		// define type
+		NodeList children = ndObject.getChildNodes();
+		for(int i=0; i<children.getLength(); i++) {
+			Node child = children.item(i);
+			
+			if("ellipse".equalsIgnoreCase(child.getNodeName())) {
+				object = new TMXEllipse();
+				continue;
+			}
+			if("point".equalsIgnoreCase(child.getNodeName())) {
+				object = new TMXEllipse();
+				continue;
+			}
+			if("polygon".equalsIgnoreCase(child.getNodeName())) {
+				object = new TMXPolygon();
+
+				NamedNodeMap polygonAttribs = child.getAttributes();
+				for(int j=0; j<polygonAttribs.getLength(); j++) {
+					Node att = polygonAttribs.item(j);
+					String attName = att.getNodeName();
+					String attValue = att.getNodeValue();
+					
+					if("points".equalsIgnoreCase(attName)) {
+						String[] strPoints = attValue.split(" ");
+						int nPoints = strPoints.length;
+						float[] points = new float[nPoints*2];
+						for(int k=0, l=0; k<nPoints; k++) {
+							String strPoint = strPoints[k];
+							points[l++] = Float.parseFloat(strPoint.split(",")[0]);
+							points[l++] = Float.parseFloat(strPoint.split(",")[1]);
+						}
+						((TMXPolygon)object).points = points;
+						continue;
+					}
+				}
+				
+				continue;
+			}
+			if("polyline".equalsIgnoreCase(child.getNodeName())) {
+				object = new TMXPolyline();
+				
+				NamedNodeMap polygonAttribs = child.getAttributes();
+				for(int j=0; j<polygonAttribs.getLength(); j++) {
+					Node att = polygonAttribs.item(j);
+					String attName = att.getNodeName();
+					String attValue = att.getNodeValue();
+					if("points".equalsIgnoreCase(attName)) {
+						String[] strPoints = attValue.split(" ");
+						int nPoints = strPoints.length;
+						float[] points = new float[nPoints*2];
+						for(int k=0, l=0; k<nPoints; k++) {
+							String strPoint = strPoints[k];
+							points[l++] = Float.parseFloat(strPoint.split(",")[0]);
+							points[l++] = Float.parseFloat(strPoint.split(",")[1]);
+						}
+						((TMXPolyline)object).points = points;
+						continue;
+					}
+				}
+				
+				continue;
+			}
+			if("text".equalsIgnoreCase(child.getNodeName())) {
+				object = new TMXText();
+				TMXText txtObj = (TMXText)object;
+				
+				NamedNodeMap polygonAttribs = child.getAttributes();
+				for(int j=0; j<polygonAttribs.getLength(); j++) {
+					Node att = polygonAttribs.item(j);
+					String attName = att.getNodeName();
+					String attValue = att.getNodeValue();
+					
+					if("fontfamily".equalsIgnoreCase(attName)) {
+						txtObj.fontfamily = attValue;
+						continue;
+					}
+					if("pixelsize".equalsIgnoreCase(attName)) {
+						txtObj.pixelsize = Integer.parseInt(attValue);
+						continue;
+					}
+					if("wrap".equalsIgnoreCase(attName)) {
+						txtObj.wrap = attValue.equalsIgnoreCase("1");
+						continue;
+					}
+					if("color".equalsIgnoreCase(attName)) {
+						txtObj.color = attValue;
+						continue;
+					}
+					if("bold".equalsIgnoreCase(attName)) {
+						txtObj.bold = attValue.equalsIgnoreCase("1");
+						continue;
+					}
+					if("italic".equalsIgnoreCase(attName)) {
+						txtObj.italic = attValue.equalsIgnoreCase("1");
+						continue;
+					}
+					if("underline".equalsIgnoreCase(attName)) {
+						txtObj.underline = attValue.equalsIgnoreCase("1");
+						continue;
+					}
+					if("strikeout".equalsIgnoreCase(attName)) {
+						txtObj.strikeout = attValue.equalsIgnoreCase("1");
+						continue;
+					}
+					if("kerning".equalsIgnoreCase(attName)) {
+						txtObj.kerning = attValue.equalsIgnoreCase("1");
+						continue;
+					}
+					if("halign".equalsIgnoreCase(attName)) {
+						txtObj.halign = attValue;
+						continue;
+					}
+					if("valign".equalsIgnoreCase(attName)) {
+						txtObj.valign = attValue;
+						continue;
+					}
+					
+				}
+				
+				continue;
+			}
+			
+		}
+		if(object == null) {
+			object = new TMXRectangle();
+		}
+		
+		
+		// get properties
+		for(int i=0; i<children.getLength(); i++) {
+			Node child = children.item(i);
+			
+			if("properties".equalsIgnoreCase(child.getNodeName())) {
+				NodeList propertyChildren = child.getChildNodes();
+				for(int j=0; j<propertyChildren.getLength(); j++) {
+					Node cProperty = propertyChildren.item(j);
+					if("property".equalsIgnoreCase(cProperty.getNodeName())) {
+						object.properties.add(parseProperty(cProperty));
+						continue;
+					}
+				}
+				continue;
+			}
+		}
+		
+		
+		
+		NamedNodeMap objectAttribs = ndObject.getAttributes();
+		for(int i=0; i<objectAttribs.getLength(); i++) {
+			Node att = objectAttribs.item(i);
+			String attName = att.getNodeName();
+			String attValue = att.getNodeValue();
+			
+			if("id".equalsIgnoreCase(attName)) {
+				object.id = Integer.parseInt(attValue);
+				continue;
+			}
+			if("name".equalsIgnoreCase(attName)) {
+				object.name = attValue;
+				continue;
+			}
+			if("type".equalsIgnoreCase(attName)) {
+				object.type = attValue;
+				continue;
+			}
+			if("rotation".equalsIgnoreCase(attName)) {
+				object.rotation = Integer.parseInt(attValue);
+				continue;
+			}
+			if("gid".equalsIgnoreCase(attName)) {
+				object.gid = Integer.parseInt(attValue);
+				continue;
+			}
+			if("visible".equalsIgnoreCase(attName)) {
+				object.visible = attValue.equalsIgnoreCase("1");
+				continue;
+			}
+			if("x".equalsIgnoreCase(attName)) {
+				object.x = Float.parseFloat(attValue);
+				continue;
+			}
+			if("y".equalsIgnoreCase(attName)) {
+				object.y = Float.parseFloat(attValue);
+				continue;
+			}
+			if("width".equalsIgnoreCase(attName)) {
+				object.width = Float.parseFloat(attValue);
+				continue;
+			}
+			if("height".equalsIgnoreCase(attName)) {
+				object.height = Float.parseFloat(attValue);
+				continue;
+			}
+		}
+		
+		
+		return object;
+	}
+	
+	
+	
 	
 	private static TMXLayer parseLayer(Node ndLayer) {
 		
 		TMXLayer layer = new TMXLayer();
-		layer.visible = true;
 		
 		NamedNodeMap layerAttribs = ndLayer.getAttributes();
 		for(int i=0; i<layerAttribs.getLength(); i++) {

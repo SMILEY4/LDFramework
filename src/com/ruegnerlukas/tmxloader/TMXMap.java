@@ -9,7 +9,7 @@ public class TMXMap {
 	public String version;
 	public String tiledversion;
 	public String orientation;
-	public String renderorder;
+	public String renderorder = "right-down";
 	public int width;
 	public int height;
 	public int tilewidth;
@@ -27,7 +27,8 @@ public class TMXMap {
 	public List<TMXTileset> tilesets = new ArrayList<TMXTileset>();
 
 	// layers
-	public List<TMXLayer> layers = new ArrayList<TMXLayer>();
+	public List<TMXLayerInt> layers = new ArrayList<TMXLayerInt>();
+
 
 	
 	
@@ -58,7 +59,7 @@ public class TMXMap {
 		for(TMXTileset t : tilesets) {
 			t.prettyPrint(layer+1);
 		}
-		for(TMXLayer l : layers) {
+		for(TMXLayerInt l : layers) {
 			l.prettyPrint(layer+1);
 		}
 
