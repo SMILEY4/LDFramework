@@ -1,102 +1,92 @@
 package com.ruegnerlukas.tileset;
 
-import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.ruegnerlukas.properties.Property;
 
 public class Tileset {
 
-	private BufferedImage image;
+	private List<TilesetLayer> layers;
 	
-	private int tilewidth;
-	private int tileheight;
-	private int spacing;
-	private int margin;
-	private int columns;
+	private HashMap<String, Property> properties;
+
 	
 	
 	
-	
-	
-	
-	public BufferedImage getImage() {
-		return image;
+	public Tileset() {
+		layers = new ArrayList<TilesetLayer>();
 	}
 	
 	
 	
 	
-	public void setImage(BufferedImage image) {
-		this.image = image;
+	public void addLayer(TilesetLayer layer) {
+		if(layers.isEmpty()) {
+			layers.add(layer);
+		} else {
+			for(int i=0; i<layers.size(); i++) {
+				if(layers.get(i).getFirstID() > layer.getFirstID()) {
+					layers.add(i, layer);
+					return;
+				}
+			}
+		}
 	}
 	
 	
 	
 	
-	public int getTileWidth() {
-		return tilewidth;
+	public TilesetLayer getLayer(int id) {
+		for(int i=0; i<layers.size(); i++) {
+			TilesetLayer layer = layers.get(i);
+			if(layer.getFirstID() <= id && layer.getFirstID()+layer.getTileCount() > id) {
+				return layer;
+			}
+		}
+		return null;
 	}
 	
 	
 	
 	
-	public void setTilewidth(int tilewidth) {
-		this.tilewidth = tilewidth;
+	public Property getProperty(String name) {
+		if(properties == null) {
+			return null;
+		}
+		return properties.get(name);
 	}
 	
 	
 	
 	
-	public int getTileHeight() {
-		return tileheight;
+	public void addProperty(Property prop) {
+		if(properties == null) {
+			properties = new HashMap<String, Property>();
+		}
+		properties.put(prop.getName(), prop);
 	}
 	
 	
 	
 	
-	public void setTileheight(int tileheight) {
-		this.tileheight = tileheight;
-	}
-	
-	
-	
-	
-	public int getSpacing() {
-		return spacing;
-	}
-	
-	
-	
-	
-	public void setSpacing(int spacing) {
-		this.spacing = spacing;
-	}
-	
-	
-	
-	
-	public int getMargin() {
-		return margin;
-	}
-	
-	
-	
-	
-	public void setMargin(int margin) {
-		this.margin = margin;
-	}
-	
-	
-	
-	
-	public int getColumns() {
-		return columns;
-	}
-	
-	
-	
-	
-	public void setColumns(int columns) {
-		this.columns = columns;
+	public void removeProperty(String name) {
+		if(properties == null) {
+			return;
+		}
+		properties.remove(name);
 	}
 	
 	
 }
+
+
+
+
+
+
+
+
+
+
