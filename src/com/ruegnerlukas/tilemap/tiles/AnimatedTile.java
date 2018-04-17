@@ -1,4 +1,4 @@
-package com.ruegnerlukas.tilemap;
+package com.ruegnerlukas.tilemap.tiles;
 
 
 

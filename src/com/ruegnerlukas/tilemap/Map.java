@@ -1,19 +1,23 @@
 package com.ruegnerlukas.tilemap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class Tilemap {
+import com.ruegnerlukas.properties.Property;
+import com.ruegnerlukas.tilemap.layers.Layer;
+
+public class Map {
 
 	
 	private List<Layer> layers;
+	private HashMap<String, Property> properties;
 	
 	
 	
 	
 	
-	
-	public Tilemap() {
+	public Map() {
 		layers = new ArrayList<Layer>();
 	}
 	
@@ -73,6 +77,35 @@ public class Tilemap {
 		return layers.size();
 	}
 	
+	
+	
+	
+	public Property getProperty(String name) {
+		if(properties == null) {
+			return null;
+		}
+		return properties.get(name);
+	}
+	
+	
+	
+	
+	public void addProperty(Property prop) {
+		if(properties == null) {
+			properties = new HashMap<String, Property>();
+		}
+		properties.put(prop.getName(), prop);
+	}
+	
+	
+	
+	
+	public void removeProperty(String name) {
+		if(properties == null) {
+			return;
+		}
+		properties.remove(name);
+	}
 	
 	
 	
