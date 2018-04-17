@@ -3,28 +3,30 @@ package com.ruegnerlukas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.RenderingHints.Key;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
-
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.ruegnerlukas.tilemap.Cell;
-import com.ruegnerlukas.tilemap.Layer;
-import com.ruegnerlukas.tilemap.Tile;
-import com.ruegnerlukas.tilemap.Tilemap;
+import com.ruegnerlukas.scenes.Scene;
+import com.ruegnerlukas.scenes.SceneManager;
+import com.ruegnerlukas.scenes.transition.ColorFadeTransition;
+import com.ruegnerlukas.simplemath.interpolation.InterpolationSine;
+import com.ruegnerlukas.simplemath.vectors.vec4.Vector4f;
+import com.ruegnerlukas.tilemap.Map;
 import com.ruegnerlukas.tilemap.TilemapLoader;
 import com.ruegnerlukas.tileset.Tileset;
+import com.ruegnerlukas.tileset.TilesetLoader;
 import com.ruegnerlukas.tmxloader.TMXLoader;
 import com.ruegnerlukas.tmxloader.TMXMap;
+
+import javafx.animation.Interpolator;
 
 public class Test {
 
@@ -33,51 +35,98 @@ public class Test {
 	private static JPanel jpanel;
 	private static boolean running = true;
 	
-	private static Tilemap map;
+	private static Map map;
 	private static Tileset set;
+	private static BufferedImage tilesetImg;
 	
 	private static int offx, offy;
 	
 	
 	public static void main(String[] args) {
 
-		Random random = new Random();
 		
+		Scene sceneA = new Scene() {
+			@Override public void load() {
+				System.out.println("Scene A: load");
+			}
+
+			@Override public void update(int deltaMS) {
+				System.out.println("Scene A: update " + deltaMS + "ms");
+			}
+
+			@Override public void unload() {
+				System.out.println("Scene A: unload");
+			}
+		};
 		
+		Scene sceneB = new Scene() {
+			@Override public void load() {
+				System.out.println("Scene B: load");
+			}
+			@Override public void update(int deltaMS) {
+				System.out.println("Scene B: update " + deltaMS + "ms");
+			}
+			@Override public void unload() {
+				System.out.println("Scene B: unload");
+			}
+		};
 		
-		TMXMap tmxMap = TMXLoader.loadTMX(new File("res/unbenannt3.tmx"));
-		tmxMap.prettyPrint(0);
-		
-		
-		
-		set = new Tileset();
-		try {
-			set.setImage(ImageIO.read(new File("res/tmw_desert_spacing.png")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		set.setTilewidth(32);
-		set.setTileheight(32);
-		set.setMargin(0);
-		set.setSpacing(1);
-		set.setColumns(8);
-		
-		
-		map = TilemapLoader.createTilemap(tmxMap);
-		
+		ColorFadeTransition transitionA = new ColorFadeTransition(2000, new Vector4f(0,0,0,1), new Vector4f(1,1,1,0), new InterpolationSine());
+		ColorFadeTransition transitionB = new ColorFadeTransition(2000, new Vector4f(1,1,1,0), new Vector4f(0,0,0,1), new InterpolationSine());
 
 		
+		SceneManager.get().addScene("sceneA", sceneA);
+		SceneManager.get().addScene("sceneB", sceneB);
+		SceneManager.get().changeScene("sceneA", null, null);
 		
-		setupDisplay();
+		long time = 0;
+		boolean changed = false;
 		
 		while(running) {
-			frame.repaint();
+			
+			System.out.println();
+			
+			if(time >= 3000 && !changed) {
+				SceneManager.get().changeScene("sceneB", transitionA, transitionB);
+				changed = true;
+			}
+			
+			SceneManager.get().update(50);
+			
 			try {
-				Thread.sleep(30);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			time += 50;
 		}
+		
+		
+//		
+//		TMXMap tmxMap = TMXLoader.loadTMX(new File("res/unbenannt3.tmx"));
+//		tmxMap.prettyPrint(0);
+//		
+//		
+//		
+//		set = TilesetLoader.createTileset(tmxMap.tilesets.get(0));
+//		map = TilemapLoader.createTilemap(tmxMap);
+//		
+//		try {
+//			tilesetImg = ImageIO.read(new File("res/"+tmxMap.tilesets.get(0).image.source));
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
+//		
+//		setupDisplay();
+//		
+//		while(running) {
+//			frame.repaint();
+//			try {
+//				Thread.sleep(30);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
 		
 	}
 	
@@ -85,7 +134,7 @@ public class Test {
 	
 	
 	private static void draw(Graphics2D g) {
-		Renderer.render(offx, offy, g, map, set);
+		Renderer.render(offx, offy, g, map, set, tilesetImg);
 	} 
 	
 	
