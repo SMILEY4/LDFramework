@@ -4,8 +4,40 @@ package com.ruegnerlukas.tmxloader;
 
 public class TMXProperty {
 
+	public static enum TMXPropertyType {
+		STRING,
+		INT,
+		FLOAT,
+		BOOL,
+		COLOR,
+		FILE;
+		
+		public static TMXPropertyType getType(String strType) {
+			if("string".equalsIgnoreCase(strType)) {
+				return STRING;
+			}
+			if("int".equalsIgnoreCase(strType)) {
+				return INT;
+			}
+			if("float".equalsIgnoreCase(strType)) {
+				return FLOAT;
+			}
+			if("bool".equalsIgnoreCase(strType)) {
+				return BOOL;
+			}
+			if("color".equalsIgnoreCase(strType)) {
+				return COLOR;
+			}
+			if("file".equalsIgnoreCase(strType)) {
+				return FILE;
+			}
+			return null;
+		}
+	}
+	
+	
 	public String name;
-	public String type;
+	public TMXPropertyType type;
 	public String value;
 
 	public void prettyPrint(int layer) {

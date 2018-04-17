@@ -14,6 +14,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.ruegnerlukas.tmxloader.TMXProperty.TMXPropertyType;
 import com.ruegnerlukas.tmxloader.tmxLayers.TMXGroupLayer;
 import com.ruegnerlukas.tmxloader.tmxLayers.TMXObjectLayer;
 import com.ruegnerlukas.tmxloader.tmxLayers.TMXTileLayer;
@@ -964,11 +965,11 @@ public class TMXLoader {
 				continue;
 			}
 			if("type".equalsIgnoreCase(attName)) {
-				property.type = attValue;
+				property.type = TMXPropertyType.getType(attValue);
 				continue;
 			}
 			if("value".equalsIgnoreCase(attName)) {
-				property.type = attValue;
+				property.value = attValue;
 				continue;
 			}
 		}
@@ -1008,10 +1009,10 @@ public class TMXLoader {
 		
 		NodeList tileChildren = ndTile.getChildNodes();
 		for(int i=0; i<tileChildren.getLength(); i++) {
-			Node cTile = tileChildren.item(i);
+			Node child = tileChildren.item(i);
 			
-			if("properties".equalsIgnoreCase(cTile.getNodeName())) {
-				NodeList propertyChildren = cTile.getChildNodes();
+			if("properties".equalsIgnoreCase(child.getNodeName())) {
+				NodeList propertyChildren = child.getChildNodes();
 				for(int j=0; j<propertyChildren.getLength(); j++) {
 					Node cProperty = propertyChildren.item(j);
 					if("property".equalsIgnoreCase(cProperty.getNodeName())) {
@@ -1023,20 +1024,28 @@ public class TMXLoader {
 			}
 			
 			
-			if("image".equalsIgnoreCase(cTile.getNodeName())) {
-				tile.image = parseImage(cTile);
+			if("image".equalsIgnoreCase(child.getNodeName())) {
+				tile.image = parseImage(child);
 				continue;
 			}
 			
 			
-			if("objectgroup".equalsIgnoreCase(cTile.getNodeName())) {
-				// TODO
+			if("objectgroup".equalsIgnoreCase(child.getNodeName())) {
+				
+				Node ndObjGroup = child;
+				NodeList objGroupChildren = ndObjGroup.getChildNodes();
+				for(int j=0; j<objGroupChildren.getLength(); j++) {
+					Node ndObject = objGroupChildren.item(j);
+					if("object".equalsIgnoreCase(ndObject.getNodeName())) {
+						tile.objects.add(parseObject(ndObject));
+					}
+				}
 				continue;
 			}
 			
 			
-			if("animation".equalsIgnoreCase(cTile.getNodeName())) {
-				tile.animation = parseAnimation(cTile);
+			if("animation".equalsIgnoreCase(child.getNodeName())) {
+				tile.animation = parseAnimation(child);
 				continue;
 			}
 			

@@ -6,19 +6,14 @@ import java.util.List;
 import com.ruegnerlukas.tmxloader.TMXProperty;
 import com.ruegnerlukas.tmxloader.tmxObjects.TMXObject;
 
-public class TMXGroupLayer implements TMXLayer {
+public class TMXGroupLayer extends TMXLayer {
 
-	public String name;
 	public int offsetX = 0;
 	public int offsetY = 0;
-	public float opacity = 1f;
-	public boolean visible = true;
 	
 	// layers
 	public List<TMXLayer> layers = new ArrayList<TMXLayer>();
 	
-	// properties
-	public List<TMXProperty> properties = new ArrayList<TMXProperty>();
 	
 	
 	

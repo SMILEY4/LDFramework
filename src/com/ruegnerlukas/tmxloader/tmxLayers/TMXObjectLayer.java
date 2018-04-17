@@ -6,19 +6,13 @@ import java.util.List;
 import com.ruegnerlukas.tmxloader.TMXProperty;
 import com.ruegnerlukas.tmxloader.tmxObjects.TMXObject;
 
-public class TMXObjectLayer implements TMXLayer {
+public class TMXObjectLayer extends TMXLayer {
 
 	// layer
-	public String name;
 	public String color;
-	public float opacity = 1f;
-	public boolean visible = true;
 	public int offsetX = 0;
 	public int offsetY = 0;
 	public String drawOrder = "topdown";
-	
-	// properties
-	public List<TMXProperty> properties = new ArrayList<TMXProperty>();
 	
 	// objects
 	public List<TMXObject> objects = new ArrayList<TMXObject>();

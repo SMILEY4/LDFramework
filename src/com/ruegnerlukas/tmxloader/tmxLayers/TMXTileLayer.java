@@ -6,21 +6,15 @@ import java.util.List;
 import com.ruegnerlukas.tmxloader.TMXData;
 import com.ruegnerlukas.tmxloader.TMXProperty;
 
-public class TMXTileLayer implements TMXLayer {
+public class TMXTileLayer extends TMXLayer {
 
 	// layer
-	public String name;
 	public int x;
 	public int y;
 	public int width;
 	public int height;
-	public float opacity = 1;
-	public boolean visible = true;
 	public int offsetX = 0;
 	public int offsetY = 0;
-	
-	// properties
-	public List<TMXProperty> properties = new ArrayList<TMXProperty>();
 	
 	// data
 	public TMXData data;

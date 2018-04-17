@@ -3,14 +3,18 @@ package com.ruegnerlukas.tmxloader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ruegnerlukas.tmxloader.tmxObjects.TMXObject;
+
 public class TMXTile {
 
 	public int id;
 	public String type;
 	public String terrain;
-	public float probabilty;
+	public float probabilty = 1.0f;
 	
 	public TMXImage image;
+	
+	public List<TMXObject> objects = new ArrayList<TMXObject>();
 	
 	public List<TMXProperty> properties = new ArrayList<TMXProperty>();
 
@@ -35,6 +39,10 @@ public class TMXTile {
 		if(image != null) image.prettyPrint(layer+1);
 		
 		if(animation != null) animation.prettyPrint(layer+1);
+		
+		for(TMXObject o : objects) {
+			o.prettyPrint(layer+1);
+		}
 		
 		for(TMXProperty p : properties) {
 			p.prettyPrint(layer+1);

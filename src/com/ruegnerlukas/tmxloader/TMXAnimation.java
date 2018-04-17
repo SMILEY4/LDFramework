@@ -8,6 +8,8 @@ public class TMXAnimation {
 	public List<TMXFrame> frames = new ArrayList<TMXFrame>();
 	
 	
+	
+	
 	public void prettyPrint(int layer) {
 		
 		String spacing = "";
