@@ -2,18 +2,20 @@ package com.ruegnerlukas;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
-import com.ruegnerlukas.tilemap.Cell;
-import com.ruegnerlukas.tilemap.Layer;
-import com.ruegnerlukas.tilemap.Tile;
-import com.ruegnerlukas.tilemap.Tilemap;
+import com.ruegnerlukas.simplemath.vectors.vec4.Vector4i;
+import com.ruegnerlukas.tilemap.Map;
+import com.ruegnerlukas.tilemap.layers.TileLayer;
+import com.ruegnerlukas.tilemap.tiles.Tile;
 import com.ruegnerlukas.tileset.Tileset;
+import com.ruegnerlukas.tileset.TilesetLayer;
 
 public class Renderer {
 
 	
 	
-	public static void render(int offx, int offy, Graphics2D g, Tilemap map, Tileset set) {
+	public static void render(int offx, int offy, Graphics2D g, Map map, Tileset set, BufferedImage tilesetImage) {
 		
 		int screenSize = 600;
 		
@@ -21,12 +23,11 @@ public class Renderer {
 		
 		for(int i=0; i<map.getNumLayers(); i++) {
 
-			Layer layer = map.getLayer(i);
+			TileLayer layer = (TileLayer)map.getLayer(i);
 			
 			for(int x=0; x<layer.getWidth(); x++) {
 				for(int y=0; y<layer.getHeight(); y++) {
-					Cell cell = layer.getCell(x, y);
-					Tile tile = cell.getTile();
+					Tile tile = layer.getTile(x, y);
 					if(tile != null) {
 						
 						// draw tile 
@@ -43,16 +44,34 @@ public class Renderer {
 
 						int id = tile.getId()-1;
 						
+						
+						// get uvs from tileset
+						TilesetLayer tsLayer = set.getLayer(id);
+						if(tsLayer == null) {
+							System.out.println(id);
+							continue;
+						}
+						Vector4i tileUV = tsLayer.getTile(id);
 
-						int col = id % set.getColumns();
-						int row = id / set.getColumns();
-
-						int sx = col * set.getTileWidth() + set.getSpacing() * col;
-						int sy = row * set.getTileHeight() + set.getSpacing() * row;
-
-//						g.fillRect(tx+4, ty+4, layer.getCellWidth()-8, layer.getCellHeight()-8);
-
-						g.drawImage(set.getImage(), tx, ty, tx+layer.getCellWidth(), ty+layer.getCellHeight(), sx, sy, sx+set.getTileWidth(), sy+set.getTileHeight(), null);
+						
+						if(tile.isFlippedDiagonally()) {
+							// possible in java2D ?
+						}
+						
+						if(tile.isFlippedHorizontally()) {
+							int tmp = tileUV.x;
+							tileUV.x = tileUV.z;
+							tileUV.z = tmp;
+						}
+						
+						if(tile.isFlippedVertically()) {
+							int tmp = tileUV.y;
+							tileUV.y = tileUV.w;
+							tileUV.w = tmp;
+						}
+						
+						
+						g.drawImage(tilesetImage, tx, ty, tx+layer.getCellWidth(), ty+layer.getCellHeight(), tileUV.x, tileUV.y, tileUV.z, tileUV.w, null);
 						
 						
 					}

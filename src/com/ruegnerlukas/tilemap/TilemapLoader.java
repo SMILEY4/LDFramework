@@ -15,6 +15,7 @@ import com.ruegnerlukas.tilemap.tiles.Tile;
 import com.ruegnerlukas.tmxloader.TMXMap;
 import com.ruegnerlukas.tmxloader.TMXProperty;
 import com.ruegnerlukas.tmxloader.TMXProperty.TMXPropertyType;
+import com.ruegnerlukas.tmxloader.TMXUtils;
 import com.ruegnerlukas.tmxloader.tmxLayers.TMXGroupLayer;
 import com.ruegnerlukas.tmxloader.tmxLayers.TMXLayer;
 import com.ruegnerlukas.tmxloader.tmxLayers.TMXObjectLayer;
@@ -30,30 +31,7 @@ public class TilemapLoader {
 		// load properties
 		List<TMXProperty> tmxMapProperties = tmxMap.properties;
 		for(TMXProperty tmxProperty : tmxMapProperties) {
-			if(tmxProperty.type == TMXPropertyType.BOOL) {
-				map.addProperty(new BoolProperty(tmxProperty.name, "1".equalsIgnoreCase(tmxProperty.value)));
-				continue;
-			}
-			if(tmxProperty.type == TMXPropertyType.INT) {
-				map.addProperty(new IntProperty(tmxProperty.name, Integer.parseInt(tmxProperty.value)));
-				continue;
-			}
-			if(tmxProperty.type == TMXPropertyType.FLOAT) {
-				map.addProperty(new FloatProperty(tmxProperty.name, Float.parseFloat(tmxProperty.value)));
-				continue;
-			}
-			if(tmxProperty.type == TMXPropertyType.STRING) {
-				map.addProperty(new StringProperty(tmxProperty.name, tmxProperty.value));
-				continue;
-			}
-			if(tmxProperty.type == TMXPropertyType.COLOR) {
-				map.addProperty(new ColorProperty(tmxProperty.name, tmxProperty.value));
-				continue;
-			}
-			if(tmxProperty.type == TMXPropertyType.FILE) {
-				map.addProperty(new FileProperty(tmxProperty.name, tmxProperty.value));
-				continue;
-			}
+			map.addProperty(TMXUtils.convertTMXProperty(tmxProperty));
 		}
 		
 		
@@ -126,30 +104,7 @@ public class TilemapLoader {
 			// load properties
 			List<TMXProperty> tmxLayerProperties = tmxLayer.properties;
 			for(TMXProperty tmxProperty : tmxLayerProperties) {
-				if(tmxProperty.type == TMXPropertyType.BOOL) {
-					layer.addProperty(new BoolProperty(tmxProperty.name, "1".equalsIgnoreCase(tmxProperty.value)));
-					continue;
-				}
-				if(tmxProperty.type == TMXPropertyType.INT) {
-					layer.addProperty(new IntProperty(tmxProperty.name, Integer.parseInt(tmxProperty.value)));
-					continue;
-				}
-				if(tmxProperty.type == TMXPropertyType.FLOAT) {
-					layer.addProperty(new FloatProperty(tmxProperty.name, Float.parseFloat(tmxProperty.value)));
-					continue;
-				}
-				if(tmxProperty.type == TMXPropertyType.STRING) {
-					layer.addProperty(new StringProperty(tmxProperty.name, tmxProperty.value));
-					continue;
-				}
-				if(tmxProperty.type == TMXPropertyType.COLOR) {
-					layer.addProperty(new ColorProperty(tmxProperty.name, tmxProperty.value));
-					continue;
-				}
-				if(tmxProperty.type == TMXPropertyType.FILE) {
-					layer.addProperty(new FileProperty(tmxProperty.name, tmxProperty.value));
-					continue;
-				}
+				layer.addProperty(TMXUtils.convertTMXProperty(tmxProperty));
 			}
 		}
 		
