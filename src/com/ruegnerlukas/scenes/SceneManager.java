@@ -28,6 +28,7 @@ public class SceneManager {
 	
 	private Map<String, Scene> scenes;
 	private Scene activeScene;
+	private Scene staticScene;
 	
 	private SceneTransition transitionIn, transitionOut;
 	private SceneTransition transitionActive;
@@ -76,16 +77,36 @@ public class SceneManager {
 	
 	protected void setScene(String name) {
 		if(activeScene != null) {
-			activeScene.unload();
+			unloadScene(activeScene);
 		}
 		Scene next = getScene(name);
 		if(next != null) {
-			next.load();
+			loadScene(next);
 		}
 		activeScene = next;
 	}
 	
+	
+	
+	
+	public void setStaticScene(String name) {
+		if(this.staticScene != null) {
+			unloadScene(staticScene);
+		}
+		this.staticScene = getScene(name);
+		if(this.staticScene != null) {
+			loadScene(staticScene);
+		}
+	}
 
+	
+	
+	
+	public Scene getStaticScene() {
+		return this.staticScene;
+	}
+	
+	
 	
 	
 	public void addScene(String name, Scene scene) {
@@ -151,13 +172,39 @@ public class SceneManager {
 		if(transitionActive != null) {
 			transitionActive.update(deltaMS);
 		}
-		
 		if(activeScene != null) {
 			activeScene.update(deltaMS);
+		}
+		if(staticScene != null) {
+			staticScene.update(deltaMS);
 		}
 		
 	}
 	
+	
+	
+	public void loadScene(Scene scene) {
+		if(!scene.isLoaded()) {
+			scene.load();
+			scene.setLoaded(true);
+		}
+	}
+	
+	
+	public void unloadScene(Scene scene) {
+		if(scene.isLoaded()) {
+			scene.unload();
+			scene.setLoaded(false);
+		}
+	}
+	
+	
+	public void unloadAll() {
+		for(Map.Entry<String, Scene> entry : scenes.entrySet()) {
+			Scene scene = entry.getValue();
+			unloadScene(scene);
+		}
+	}
 	
 	
 	
