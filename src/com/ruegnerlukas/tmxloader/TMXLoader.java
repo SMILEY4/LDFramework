@@ -2,16 +2,17 @@ package com.ruegnerlukas.tmxloader;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.ruegnerlukas.tmxloader.TMXProperty.TMXPropertyType;
@@ -26,7 +27,7 @@ import com.ruegnerlukas.tmxloader.tmxObjects.*;
 public class TMXLoader {
 
 	
-	public static TMXTileset loadTSX(File fileTileset) {
+	public TMXTileset loadTSX(File fileTileset) {
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -45,11 +46,12 @@ public class TMXLoader {
 	
 	
 	
-	public static TMXTileset loadTSX(String strTileset) {
+	public TMXTileset loadTSX(String strTileset) {
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(strTileset);
+			Document doc = dBuilder.parse(new InputSource(new StringReader(strTileset)));
+			
 			return loadTSX(doc);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -63,7 +65,7 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXTileset loadTSX(Document doc) {
+	private TMXTileset loadTSX(Document doc) {
 		
 		doc.getDocumentElement().normalize();
 		
@@ -79,7 +81,7 @@ public class TMXLoader {
 	
 	
 	
-	public static TMXMap loadTMX(File file) {
+	public TMXMap loadTMX(File file) {
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -98,11 +100,11 @@ public class TMXLoader {
 	
 	
 	
-	public static TMXMap loadTMX(String strTileset) {
+	public TMXMap loadTMX(String strTilemap) {
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(strTileset);
+			Document doc = dBuilder.parse(new InputSource(new StringReader(strTilemap)));
 			
 			return loadTMX(doc, "");
 		} catch (ParserConfigurationException e) {
@@ -118,7 +120,7 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXMap loadTMX(Document doc, String dir) {
+	private TMXMap loadTMX(Document doc, String dir) {
 		
 		doc.getDocumentElement().normalize();
 		
@@ -134,7 +136,7 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXMap parseMap(Node ndMap, String dir) {
+	private TMXMap parseMap(Node ndMap, String dir) {
 		
 		TMXMap map = new TMXMap();
 		
@@ -220,12 +222,7 @@ public class TMXLoader {
 			if("tileset".equalsIgnoreCase(child.getNodeName())) {
 				TMXTileset tileset = parseTileset(child);
 				if(tileset.source != null && !tileset.source.isEmpty()) {
-					File file = new File(dir+tileset.source);
-					if(file.exists()) {
-						tileset = loadTSX(file);
-					} else {
-						System.err.println("TSX-File does not exist: " + file);
-					}
+					tileset = loadTSX(onRequestFileContent(tileset.source));
 					
 				}
 				map.tilesets.add(tileset);
@@ -259,7 +256,7 @@ public class TMXLoader {
 
 	
 	
-	public static TMXGroupLayer parseGroupLayer(Node ndGroup) {
+	public TMXGroupLayer parseGroupLayer(Node ndGroup) {
 		
 		TMXGroupLayer groupLayer = new TMXGroupLayer();
 		
@@ -336,7 +333,7 @@ public class TMXLoader {
 	
 	
 
-	private static TMXObjectLayer parseObjectLayer(Node ndObjectGroup) {
+	private TMXObjectLayer parseObjectLayer(Node ndObjectGroup) {
 		
 		TMXObjectLayer objGroup = new TMXObjectLayer();
 		
@@ -408,7 +405,7 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXObject parseObject(Node ndObject) {
+	private TMXObject parseObject(Node ndObject) {
 		
 		TMXObject object = null;
 		
@@ -614,7 +611,7 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXTileLayer parseLayer(Node ndLayer) {
+	private TMXTileLayer parseLayer(Node ndLayer) {
 		
 		TMXTileLayer layer = new TMXTileLayer();
 		
@@ -694,7 +691,7 @@ public class TMXLoader {
 	
 	
 	
-	public static TMXData parseData(Node ndData) {
+	public TMXData parseData(Node ndData) {
 		TMXData data = new TMXData();
 		
 		data.data = ndData.getTextContent();
@@ -743,7 +740,7 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXChunk parseChunk(Node ndChunk) {
+	private TMXChunk parseChunk(Node ndChunk) {
 		
 		TMXChunk chunk = new TMXChunk();
 		
@@ -796,7 +793,7 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXTileset parseTileset(Node ndTileset) {
+	private TMXTileset parseTileset(Node ndTileset) {
 		
 		TMXTileset tileset = new TMXTileset();
 		
@@ -951,7 +948,7 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXProperty parseProperty(Node ndProperty) {
+	private TMXProperty parseProperty(Node ndProperty) {
 		
 		TMXProperty property = new TMXProperty();
 		
@@ -980,7 +977,7 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXTile parseTile(Node ndTile) {
+	private TMXTile parseTile(Node ndTile) {
 		
 		TMXTile tile = new TMXTile();
 		
@@ -1057,7 +1054,7 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXAnimation parseAnimation(Node ndAnimation) {
+	private TMXAnimation parseAnimation(Node ndAnimation) {
 		
 		TMXAnimation anim = new TMXAnimation();
 		
@@ -1098,7 +1095,7 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXTerrain parseTerrain(Node ndTerrain) {
+	private TMXTerrain parseTerrain(Node ndTerrain) {
 		
 		TMXTerrain terrain = new TMXTerrain();
 		
@@ -1141,7 +1138,7 @@ public class TMXLoader {
 	
 	
 	
-	private static TMXImage parseImage(Node ndImage) {
+	private TMXImage parseImage(Node ndImage) {
 	
 		TMXImage image = new TMXImage();
 		
@@ -1176,6 +1173,11 @@ public class TMXLoader {
 		
 	}
 	
+	
+	
+	public String onRequestFileContent(String file) {
+		return "";
+	}
 	
 	
 	
