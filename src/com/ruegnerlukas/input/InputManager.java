@@ -12,7 +12,7 @@ import com.ruegnerlukas.input.actions.MouseWheelAction.WheelDirection;
 import com.ruegnerlukas.input.actions.MultiKeyAction;
 import com.ruegnerlukas.input.actions.MultiMouseAction;
 
-public class InputSystem {
+public class InputManager {
 
 	
 	public static enum InputState {
@@ -35,7 +35,7 @@ public class InputSystem {
 	private int mouseWheelScrollAmount;
 
 	
-	public InputSystem() {
+	public InputManager() {
 		actions = new HashMap<String, InputAction>();
 		
 		keyStates = new InputState[256];

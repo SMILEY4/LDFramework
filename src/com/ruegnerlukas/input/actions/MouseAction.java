@@ -1,6 +1,6 @@
 package com.ruegnerlukas.input.actions;
 
-import com.ruegnerlukas.input.InputSystem.InputState;
+import com.ruegnerlukas.input.InputManager.InputState;
 
 public class MouseAction extends InputAction {
 
