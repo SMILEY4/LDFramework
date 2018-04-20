@@ -1,0 +1,28 @@
+   
+- render tilemap
+
+- entity system
+
+- connect renderer to entity system
+- connect maplayers to entity system
+
+
+- tmx: support more tileLayer formats (not only cvs)
+
+- add InputSystem (unique for each scene -> switch control-scheme)
+
+
+- sceneSystem:
+	master scene:
+		-> always active -> draws after active scene -> effects/logic not bound to specific scene (e.g transitions)
+	
+	scene layers:
+		-> sceneManager:layer:activeScene
+							 :scenes
+							 :masterScene
+							 
+		-> differend layers of sceneSystems (replace current manager with layer -> new manager handles layers)
+			(e.g: layer0=gameworld, layer1=worldOverlay(), layer2=gui
+			
+			
+- https://www.gamasutra.com/blogs/MichaelKissner/20151027/257369/Writing_a_Game_Engine_from_Scratch__Part_1_Messaging.php
